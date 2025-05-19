@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multi-touch Test</title>
+  <style>
+    body { margin: 0; touch-action: none; }
+    #info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      color: white;
+      background: black;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="info">タッチしてみてください</div>
+  <script>
+    function updateTouches(event) {
+      let output = "";
+      if (event.touches) {
+        for (let i = 0; i < event.touches.length; i++) {
+          const touch = event.touches[i];
+          output += `Touch ${i + 1}: x=${touch.clientX}, y=${touch.clientY}<br>`;
+        }
+      } else {
+        // fallback for mouse or pointer input
+        output = `Pointer: x=${event.clientX}, y=${event.clientY}`;
+      }
+      document.getElementById("info").innerHTML = output;
+      event.preventDefault();
+    }
+
+    document.addEventListener("touchstart", updateTouches, { passive: false });
+    document.addEventListener("touchmove", updateTouches, { passive: false });
+
+    document.addEventListener("pointerdown", updateTouches);
+    document.addEventListener("pointermove", updateTouches);
+  </script>
+</body>
+</html>
