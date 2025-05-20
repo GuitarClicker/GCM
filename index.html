@@ -6,10 +6,6 @@
   <title>スマホ縦画面アプリ</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!--ログイン認証機能FireBase-->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-
 </head>
 <body>
   <div id="landscape-warning">
@@ -33,5 +29,41 @@
   </footer>
 
   <script src="script.js"></script>
+  <!--firebaseログイン機能-->
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDMuOygbY8BRPv9nIWCT9Ee6zm1fNbCDVo",
+    authDomain: "guitarclicker-cdc66.firebaseapp.com",
+    projectId: "guitarclicker-cdc66",
+    storageBucket: "guitarclicker-cdc66.firebasestorage.app",
+    messagingSenderId: "1073871813234",
+    appId: "1:1073871813234:web:c8e84f7982538e7b2da0eb",
+    measurementId: "G-93PFRCDXDZ"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const provider = new GoogleAuthProvider();
+
+  document.getElementById("loginButton").addEventListener("click", async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      alert(`ようこそ、${user.displayName} さん！`);
+    } catch (error) {
+      console.error("ログインエラー:", error);
+      alert("ログインに失敗しました");
+    }
+});
+</script>
 </body>
 </html>
