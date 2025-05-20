@@ -1,3 +1,4 @@
+//動作確認
 // ボタンを押したときの挙動
 document.getElementById("tapButton").addEventListener("click", () => {
   alert("タップされました！");
