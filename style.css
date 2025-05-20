@@ -21,8 +21,8 @@ header, footer {
 
 main {
   flex: 1;
-  width: 100%;
-  max-width: 480px;
+  width: 100vw;
+  /*max-width: 480px;*/
   text-align: center;
   padding: 20px;
   box-sizing: border-box;
