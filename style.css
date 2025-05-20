@@ -8,12 +8,6 @@ body, html {
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  /* 背景画像を設定 */
-  background-image: url('GCbackimage.png'); /* ←ファイル名に合わせて変更 */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 /* レイアウト */
@@ -32,6 +26,12 @@ main {
   text-align: center;
   padding: 20px;
   box-sizing: border-box;
+
+  /* 背景画像を設定 */
+  background-image: url('GCbackimage.png'); /* ←ファイル名に合わせて変更 */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* ボタン */
