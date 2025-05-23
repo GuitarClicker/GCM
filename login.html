@@ -1,48 +1,43 @@
-<body>
-  <h1>Googleログイン</h1>
-  <p>下のボタンを押してログインしてください</p>
-  <button id="loginButton">Googleでログイン</button>
-  <div id="statusMessage"></div>
+// login.html で Google ログイン後、UID を Firestore の loginSessions/○○○ に保存
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDMuOygbY8BRPv9nIWCT9Ee6zm1fNbCDVo",
-      authDomain: "guitarclicker-cdc66.firebaseapp.com",
-      projectId: "guitarclicker-cdc66"
-    };
+const firebaseConfig = {
+  apiKey: "(API_KEY)",
+  authDomain: "(PROJECT_ID).firebaseapp.com",
+  projectId: "(PROJECT_ID)"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-    const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get("session_id");
+const params = new URLSearchParams(window.location.search);
+const sessionId = params.get("session_id");
 
-    if (!sessionId) {
-      document.getElementById("statusMessage").innerText = "❌ session_id が見つかりませんでした。";
-    } else {
-      document.getElementById("loginButton").addEventListener("click", async () => {
-        try {
-          const provider = new GoogleAuthProvider();
-          const result = await signInWithPopup(auth, provider);
-          const token = await result.user.getIdToken();
+// ログインボタン抽出
+const loginButton = document.getElementById("loginButton");
+loginButton.addEventListener("click", async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    const uid = user.uid;
 
-          await setDoc(doc(db, "loginSessions", sessionId), {
-            token: token,
-            email: result.user.email,
-            displayName: result.user.displayName,
-            timestamp: serverTimestamp()
-          });
+    await setDoc(doc(db, "loginSessions", sessionId), {
+      uid: uid,
+      displayName: user.displayName,
+      email: user.email,
+      timestamp: serverTimestamp()
+    });
 
-          document.getElementById("statusMessage").innerText = "✅ ログイン成功しました。Unityに戻ってください。";
-        } catch (error) {
-          document.getElementById("statusMessage").innerText = "❌ エラー: " + error.message;
-        }
-      });
-    }
-  </script>
-</body>
+    document.body.innerHTML = "<h2>✅ ログイン成功しました。Unityに戻ってください。</h2>";
+  } catch (e) {
+    console.error(e);
+    alert("ログインに失敗しました。");
+  }
+});
+</script>
