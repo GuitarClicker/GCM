@@ -1,42 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ログイン</title>
+</head>
+<body>
+  <h1>Googleログイン</h1>
+  <button id="loginButton">ログイン</button>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "(API_KEY)",
-  authDomain: "(PROJECT_ID).firebaseapp.com",
-  projectId: "(PROJECT_ID)"
-};
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID"
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-const params = new URLSearchParams(window.location.search);
-const sessionId = params.get("session_id");
+    const params = new URLSearchParams(location.search);
+    const sessionId = params.get("session_id");
 
-// ログインボタン抽出
-const loginButton = document.getElementById("loginButton");
-loginButton.addEventListener("click", async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    const uid = user.uid;
+    const loginButton = document.getElementById("loginButton");
+    loginButton.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const uid = result.user.uid;
 
-    await setDoc(doc(db, "loginSessions", sessionId), {
-      uid: uid,
-      displayName: user.displayName,
-      email: user.email,
-      timestamp: serverTimestamp()
+        await setDoc(doc(db, "loginSessions", sessionId), {
+          uid: uid,
+          displayName: result.user.displayName,
+          email: result.user.email,
+          timestamp: serverTimestamp()
+        });
+
+        document.body.innerHTML = "<h2>✅ ログイン完了しました。Unityに戻ってください。</h2>";
+      } catch (e) {
+        console.error(e);
+        alert("ログインに失敗しました。");
+      }
     });
-
-    document.body.innerHTML = "<h2>✅ ログイン成功しました。Unityに戻ってください。</h2>";
-  } catch (e) {
-    console.error(e);
-    alert("ログインに失敗しました。");
-  }
-});
-</script>
+  </script>
+</body>
+</html>
