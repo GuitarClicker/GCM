@@ -1,16 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Googleログイン</title>
+<body>
+  <h1>Googleログイン</h1>
+  <p>下のボタンを押してログインしてください</p>
+  <button id="loginButton">Googleでログイン</button>
+  <div id="statusMessage"></div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDMuOygbY8BRPv9nIWCT9Ee6zm1fNbCDVo",
-      authDomain: "guitarclicker.-cdc66.firebaseapp.com",
+      authDomain: "guitarclicker-cdc66.firebaseapp.com",
       projectId: "guitarclicker-cdc66"
     };
 
@@ -22,28 +23,26 @@
     const sessionId = params.get("session_id");
 
     if (!sessionId) {
-      document.body.innerHTML = "❌ session_id が見つかりませんでした。";
+      document.getElementById("statusMessage").innerText = "❌ session_id が見つかりませんでした。";
     } else {
-      getRedirectResult(auth).then(async (result) => {
-        if (result && result.user) {
+      document.getElementById("loginButton").addEventListener("click", async () => {
+        try {
+          const provider = new GoogleAuthProvider();
+          const result = await signInWithPopup(auth, provider);
           const token = await result.user.getIdToken();
+
           await setDoc(doc(db, "loginSessions", sessionId), {
             token: token,
+            email: result.user.email,
+            displayName: result.user.displayName,
             timestamp: serverTimestamp()
           });
-          document.body.innerHTML = "✅ ログイン成功！Unity に戻ってください。";
-        } else {
-          // 初回アクセス時にリダイレクトログインを開始
-          const provider = new GoogleAuthProvider();
-          signInWithRedirect(auth, provider);
+
+          document.getElementById("statusMessage").innerText = "✅ ログイン成功しました。Unityに戻ってください。";
+        } catch (error) {
+          document.getElementById("statusMessage").innerText = "❌ エラー: " + error.message;
         }
-      }).catch(error => {
-        document.body.innerHTML = "❌ エラー: " + error.message;
       });
     }
   </script>
-</head>
-<body>
-  <h1>Googleログイン処理中...</h1>
 </body>
-</html>
